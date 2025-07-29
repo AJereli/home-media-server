@@ -25,7 +25,7 @@ services:
       - /dev/dri:/dev/dri # For hardware acceleration (if available)
 
   kodi:
-    image: linuxserver/kodi:latest
+    image: lscr.io/linuxserver/kodi:latest
     container_name: kodi
     restart: unless-stopped
     ports:
