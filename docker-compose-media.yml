@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    container_name: jellyfin
+    user: 1000:1000
+    restart: unless-stopped
+    ports:
+      - "8096:8096"
+      - "8920:8920"
+      - "7359:7359/udp"
+      - "1900:1900/udp"
+    volumes:
+      - ./jellyfin/config:/config
+      - ./jellyfin/cache:/cache
+      - ./media:/media:ro
+      - ./jellyfin/transcodes:/transcodes
+    environment:
+      - JELLYFIN_PublishedServerUrl=http://192.168.178.99:8096
+      - TZ=Europe/Berlin
+    networks:
+      - media-network
+    devices:
+      - /dev/dri:/dev/dri # For hardware acceleration (if available)
+
+  kodi:
+    image: linuxserver/kodi:latest
+    container_name: kodi
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+      - "9090:9090"
+      - "9777:9777/udp"
+    volumes:
+      - ./kodi/config:/config/.kodi
+      - ./media:/media:ro
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Berlin
+    networks:
+      - media-network
+    devices:
+      - /dev/dri:/dev/dri # For hardware acceleration
+
+networks:
+  media-network:
+    driver: bridge
+
+volumes:
+  media:
+    driver: local
