@@ -24,26 +24,6 @@ services:
     devices:
       - /dev/dri:/dev/dri # For hardware acceleration (if available)
 
-  kodi:
-    image: lscr.io/linuxserver/kodi:latest
-    container_name: kodi
-    restart: unless-stopped
-    ports:
-      - "8080:8080"
-      - "9090:9090"
-      - "9777:9777/udp"
-    volumes:
-      - ./kodi/config:/config/.kodi
-      - ./media:/media:ro
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Berlin
-    networks:
-      - media-network
-    devices:
-      - /dev/dri:/dev/dri # For hardware acceleration
-
 networks:
   media-network:
     driver: bridge
