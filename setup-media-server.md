@@ -1,12 +1,14 @@
 # Media Server Setup Instructions
 
 ## Directory Structure
-Create the following directories before starting:
+Create the directories and set proper permissions:
 
 ```bash
 mkdir -p jellyfin/{config,cache,transcodes}
-mkdir -p media/{movies,tv,music}
+sudo chown -R 1000:1000 jellyfin/
 ```
+
+Note: Media files are accessed from `/home/jereli/Videos` (read-only)
 
 ## Configuration Notes
 
