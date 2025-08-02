@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jereli</title>
+    <style>
+        :root {
+            --primary-green: #a8e6cf;
+            --light-green: #dcedc8;
+            --bg-green: #f1f8e9;
+            --text-dark: #2e2e2e;
+            --text-light: #666666;
+            --shadow: rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-green) 0%, #ffffff 100%);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 600px;
+            padding: 48px 32px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px var(--shadow);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(168, 230, 207, 0.2);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: var(--text-dark);
+            margin-bottom: 32px;
+            text-align: center;
+            letter-spacing: -0.02em;
+        }
+
+        .content {
+            font-size: 1.125rem;
+            color: var(--text-light);
+            margin-bottom: 32px;
+            text-align: center;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, var(--primary-green) 0%, var(--light-green) 100%);
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: var(--text-dark);
+            font-weight: 500;
+        }
+
+        .ps-section {
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--light-green);
+        }
+
+        .ps-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .ps-content {
+            font-size: 1rem;
+            color: var(--text-light);
+        }
+
+        .link {
+            color: var(--primary-green);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid transparent;
+        }
+
+        .link:hover {
+            color: var(--text-dark);
+            border-bottom-color: var(--primary-green);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 16px;
+                padding: 32px 24px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .content {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Hi, this is <span class="highlight">Jereli</span></h1>
+        <div class="content">
+            It's completely empty here for now, but soon I'll add a little information about myself, maybe it will become a static page with my resume, or something more. In any case, there's nothing to do here for now.
+        </div>
+        
+        <div class="ps-section">
+            <div class="ps-title">PS</div>
+            <div class="ps-content">
+                By the way, how do you manage your finances? If not, my app can help with that <a href="https://money-bee.app" class="link" target="_blank" rel="noopener noreferrer">money-bee.app</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
