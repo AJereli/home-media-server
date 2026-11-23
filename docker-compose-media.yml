@@ -2,7 +2,8 @@ version: '3.8'
 
 services:
   jellyfin:
-    image: jellyfin/jellyfin:latest
+    # Pinned: 'latest' would silently jump to 12.x (one-way DB migration) on the next pull.
+    image: jellyfin/jellyfin:10.10.7
     container_name: jellyfin
     restart: unless-stopped
     ports:
@@ -13,7 +14,13 @@ services:
     volumes:
       - ./jellyfin/config:/config
       - ./jellyfin/cache:/cache
-      - ./jellyfin/transcodes:/transcodes
+      # Transcode segments go to the HDD, not the SD card (SD write stalls froze the whole Pi).
+      # Encoding settings point TranscodingTempPath here.
+      - type: bind
+        source: /mnt/media/_Transcodes
+        target: /transcodes
+        bind:
+          create_host_path: false
       - /mnt/media:/media:rw
     environment:
       - JELLYFIN_PublishedServerUrl=http://192.168.178.99:8096
