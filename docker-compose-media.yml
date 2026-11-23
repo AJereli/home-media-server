@@ -2,8 +2,8 @@ version: '3.8'
 
 services:
   jellyfin:
-    # Pinned: 'latest' would silently jump to 12.x (one-way DB migration) on the next pull.
-    image: jellyfin/jellyfin:10.10.7
+    # Pinned on purpose: major upgrades run one-way DB migrations — back up jellyfin/config first.
+    image: jellyfin/jellyfin:12.4
     container_name: jellyfin
     restart: unless-stopped
     ports:
