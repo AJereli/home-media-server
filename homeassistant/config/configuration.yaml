@@ -1,19 +1,12 @@
-# Home Assistant at http://home.local, LAN only:
-#   - nginx vhost nginx/conf.d/home.local.conf (LAN + Docker bridges, Cloudflare tunnel refused)
-#   - host firewall host/ha-lan-only.sh: HA ports reachable from loopback, 192.168.178.0/24,
-#     LAN IPv6 (ULA/link-local) and Docker bridges only
+# Home Assistant at http://home.local:8123 (http://home.local redirects there), LAN only:
+#   - host firewall host/ha-lan-only.sh: HA ports reachable from loopback, 192.168.178.0/24
+#     and LAN IPv6 (ULA/link-local) only
+#   - no reverse proxy, so HA sees real client addresses and trusts no X-Forwarded-For
 # No Nabu Casa / remote access. Everything else is configured in the UI.
 
 default_config:
 
 http:
-  use_x_forwarded_for: true
-  # nginx (Docker) reaches HA from one of its bridge networks
-  trusted_proxies:
-    - 127.0.0.1
-    - ::1
-    - 172.18.0.0/16   # home-media-server_monitoring
-    - 172.21.0.0/16   # home-media-server_nginx-network
   ip_ban_enabled: true
   login_attempts_threshold: 5
 

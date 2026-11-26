@@ -4,9 +4,12 @@ services:
   nginx:
     image: nginx:alpine
     container_name: nginx-proxy
+    # IPv4 only. Over IPv6 Docker's userland proxy would hide the client's address behind a bridge
+    # gateway, and the LAN-only vhosts (logs.local, home.local) could not tell LAN from internet.
+    # IPv6 clients get an instant refusal and fall back to IPv4.
     ports:
-      - "80:80"
-      - "443:443"
+      - "0.0.0.0:80:80"
+      - "0.0.0.0:443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/conf.d:/etc/nginx/conf.d:ro

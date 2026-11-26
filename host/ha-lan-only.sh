@@ -13,7 +13,6 @@ for ipt in iptables ip6tables; do
 done
 
 iptables -A HA-LAN-ONLY -s 192.168.178.0/24 -j RETURN
-iptables -A HA-LAN-ONLY -s 172.16.0.0/12 -j RETURN       # Docker bridges (nginx)
 iptables -A HA-LAN-ONLY -j DROP
 
 ip6tables -A HA-LAN-ONLY -s fd00::/8 -j RETURN            # home network ULA (stable, never routed outside)
