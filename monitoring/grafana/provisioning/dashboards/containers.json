@@ -118,7 +118,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "100 * sum(rate(container_cpu_usage_seconds_total{name!=\"\"}[$__rate_interval])) / scalar(count(count by (cpu) (node_cpu_seconds_total{job=\"node-exporter\"})))",
+          "expr": "100 * sum(rate(container_cpu_usage_seconds_total{name!=\"\"}[$__rate_interval])) / scalar(count(count by (cpu) (node_cpu_seconds_total{job=\"node-exporter\",instance=\"raspberrypi\"})))",
           "legendFormat": "__auto",
           "refId": "A"
         }
@@ -170,7 +170,7 @@
       "id": 25,
       "type": "stat",
       "title": "RAM used by containers",
-      "description": "",
+      "description": "Needs the memory cgroup (off in the Pi kernel by default)",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -187,7 +187,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(container_memory_working_set_bytes{name!=\"\"})",
+          "expr": "sum(container_memory_working_set_bytes{name!=\"\"}) > 0",
           "legendFormat": "__auto",
           "refId": "A"
         }
@@ -207,6 +207,7 @@
           "color": {
             "mode": "thresholds"
           },
+          "noValue": "off in kernel",
           "decimals": 1
         },
         "overrides": []
@@ -306,7 +307,7 @@
         "type": "prometheus",
         "uid": "prometheus"
       },
-      "description": "Transmission runs inside gluetun's network, so torrent traffic is shown on the gluetun row.",
+      "description": "Transmission runs inside gluetun's network, so torrent traffic is shown on the gluetun row. Memory and SD writes: Needs the memory cgroup (off in the Pi kernel by default)",
       "gridPos": {
         "x": 0,
         "y": 4,
@@ -343,7 +344,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (name) (container_memory_working_set_bytes{name!=\"\"})",
+          "expr": "sum by (name) (container_memory_working_set_bytes{name!=\"\"}) > 0",
           "legendFormat": "__auto",
           "refId": "C",
           "instant": true,
@@ -379,7 +380,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (name) (rate(container_fs_writes_bytes_total{name!=\"\"}[5m]))",
+          "expr": "sum by (name) (rate(container_fs_writes_bytes_total{name!=\"\"}[5m])) and on() (sum(container_memory_working_set_bytes{name!=\"\"}) > 0)",
           "legendFormat": "__auto",
           "refId": "F",
           "instant": true,
@@ -569,6 +570,18 @@
                 "value": 1
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "Memory|SD writes"
+            },
+            "properties": [
+              {
+                "id": "noValue",
+                "value": "n/a"
+              }
+            ]
           }
         ]
       },
@@ -648,7 +661,7 @@
       "id": 29,
       "type": "timeseries",
       "title": "Memory per container",
-      "description": "",
+      "description": "Needs the memory cgroup (off in the Pi kernel by default)",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -665,7 +678,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (name) (container_memory_working_set_bytes{name!=\"\"})",
+          "expr": "sum by (name) (container_memory_working_set_bytes{name!=\"\"}) > 0",
           "legendFormat": "{{name}}",
           "refId": "A"
         }
@@ -688,6 +701,7 @@
           "color": {
             "mode": "palette-classic"
           },
+          "noValue": "Needs the memory cgroup: off in the Pi kernel by default",
           "min": 0
         },
         "overrides": []
@@ -797,7 +811,7 @@
       "id": 31,
       "type": "timeseries",
       "title": "SD card writes per container",
-      "description": "Who writes to the SD card. Writes to the media HDD are not counted here.",
+      "description": "Who writes to the SD card. Writes to the media HDD are not counted here. Needs the memory cgroup (off in the Pi kernel by default)",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -814,7 +828,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (name) (rate(container_fs_writes_bytes_total{name!=\"\"}[$__rate_interval]))",
+          "expr": "sum by (name) (rate(container_fs_writes_bytes_total{name!=\"\"}[$__rate_interval])) and on() (sum(container_memory_working_set_bytes{name!=\"\"}) > 0)",
           "legendFormat": "{{name}}",
           "refId": "A"
         }
@@ -837,6 +851,7 @@
           "color": {
             "mode": "palette-classic"
           },
+          "noValue": "Needs the memory cgroup: off in the Pi kernel by default",
           "min": 0
         },
         "overrides": []
