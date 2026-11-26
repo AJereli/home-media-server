@@ -3,9 +3,11 @@
 # including the Pi's public IPv6, so the FritzBox would be the only thing standing in the way otherwise.
 #   8123        web UI / API
 #   18555       go2rtc WebRTC (camera streams)
+#   1900, 5353  SSDP / mDNS answers (discovery is meant for the home network only; also covers
+#               avahi, kino-mdns and Jellyfin's SSDP on the same ports)
 # Installed as /usr/local/sbin/ha-lan-only.sh, run by ha-lan-only.service at boot (before Docker).
 set -e
-PORTS=8123,18555
+PORTS=8123,18555,1900,5353
 
 for ipt in iptables ip6tables; do
   $ipt -N HA-LAN-ONLY 2>/dev/null || $ipt -F HA-LAN-ONLY
