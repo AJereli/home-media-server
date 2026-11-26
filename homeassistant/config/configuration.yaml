@@ -6,8 +6,13 @@
 
 default_config:
 
-# HTTP settings (IP ban, login attempts threshold) live in the UI since 2026.11:
-# Settings → System → Network. A YAML http: block is only imported on the very first start.
+# Since 2026.11 HTTP settings live in the UI (Settings → System → Network, confirm within 5 min).
+# This block is only imported on a fresh install (empty .storage) and is ignored afterwards; it stays
+# here so a rebuilt instance starts with brute-force protection on. Removed in HA 2027.2.
+# On this instance the same values must be set (and confirmed) in the UI.
+http:
+  ip_ban_enabled: true
+  login_attempts_threshold: 5
 
 # The SD card is slow and wears out: write history every 30 s, keep 7 days (long-term trends live in Prometheus).
 recorder:
