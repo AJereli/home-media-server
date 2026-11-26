@@ -23,7 +23,7 @@ ip6tables -A HA-LAN-ONLY -j DROP
 
 for ipt in iptables ip6tables; do
   # drop jumps left by an older port list, then add the current ones
-  $ipt -S INPUT | grep -- '-j HA-LAN-ONLY' | sed 's/^-A //' | while read -r rule; do $ipt -D INPUT $rule; done
+  $ipt -S INPUT | grep -- '-j HA-LAN-ONLY' | sed 's/^-A INPUT //' | while read -r rule; do $ipt -D INPUT $rule; done
   for proto in tcp udp; do
     $ipt -I INPUT -p $proto -m multiport --dports $PORTS -j HA-LAN-ONLY
   done
