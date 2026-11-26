@@ -320,7 +320,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "time() - max by (name, image) (container_start_time_seconds{name!=\"\"})",
+          "expr": "time() - ((max by (name, image) (container_start_time_seconds{name!=\"\"}) > scalar(node_boot_time_seconds{job=\"node-exporter\",instance=\"raspberrypi\"})) or (0 * max by (name, image) (container_start_time_seconds{name!=\"\"}) + scalar(node_boot_time_seconds{job=\"node-exporter\",instance=\"raspberrypi\"})))",
           "legendFormat": "__auto",
           "refId": "A",
           "instant": true,
