@@ -121,8 +121,10 @@ pi = [
     stat("Load (1 min)", f'node_load1{{{NODE}}}', 6, y, th=thresholds(("orange", 3), ("red", 4)), decimals=2,
          desc="Average number of runnable/waiting processes. The Pi has 4 cores: above 4 means work is queuing (often waiting for the SD card)."),
     stat("RAM used", MEM_USED, 9, y, unit="percent", th=pct, decimals=0, minv=0, maxv=100),
-    stat("Swap used", SWAP_USED, 12, y, unit="percent", th=thresholds(("orange", 50), ("red", 80)), decimals=0, minv=0, maxv=100,
-         desc="Swap lives on the SD card, so heavy swapping slows everything down."),
+    stat("Swap used", SWAP_USED, 12, y, unit="percent", decimals=0, minv=0, maxv=100,
+         th={"mode": "absolute", "steps": [{"color": "blue", "value": None}]},
+         desc="Swap is zram (compressed RAM, 2 GB). A full swap alone is harmless: idle pages parked there. "
+              "What hurts is constant traffic, see the Swap traffic panel."),
     stat("CPU temperature", CPU_TEMP, 15, y, unit="celsius", th=thresholds(("orange", 70), ("red", 80)), decimals=1,
          desc="The Pi 5 starts throttling at about 85 °C."),
     stat("SD card used", fs_used("/"), 18, y, unit="percent", th=pct, decimals=0, minv=0, maxv=100, graph=False,
@@ -157,11 +159,12 @@ pi += [
     ], 0, y, w=8, unit="bytes", minv=0, overrides=[
         {"matcher": {"id": "byName", "options": "swap used"},
          "properties": [{"id": "color", "value": {"mode": "fixed", "fixedColor": "red"}}, {"id": "custom.fillOpacity", "value": 0}]}]),
-    ts("Swap traffic (SD card)", [
+    ts("Swap traffic", [
         (f'rate(node_vmstat_pswpin{{{NODE}}}[$__rate_interval]) * 4096', "in"),
         (f'rate(node_vmstat_pswpout{{{NODE}}}[$__rate_interval]) * 4096', "out"),
     ], 8, y, w=8, unit="Bps", minv=0,
-       desc="Pages moved between RAM and swap. Sustained traffic means RAM is too tight."),
+       desc="Pages moved between RAM and swap (zram). Short bursts are fine; sustained traffic means RAM is too tight.",
+       th=thresholds(("red", 5 * 1024 * 1024)), th_style="line"),
     ts("Temperature", [
         (CPU_TEMP, "CPU"),
     ], 16, y, w=8, unit="celsius", fill=20, th=thresholds(("orange", 70), ("red", 80)), th_style="line"),

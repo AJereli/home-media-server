@@ -313,7 +313,7 @@
       "id": 5,
       "type": "stat",
       "title": "Swap used",
-      "description": "Swap lives on the SD card, so heavy swapping slows everything down.",
+      "description": "Swap is zram (compressed RAM, 2 GB). A full swap alone is harmless: idle pages parked there. What hurts is constant traffic, see the Swap traffic panel.",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -342,16 +342,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "blue",
                 "value": null
-              },
-              {
-                "color": "orange",
-                "value": 50
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
@@ -900,8 +892,8 @@
     {
       "id": 13,
       "type": "timeseries",
-      "title": "Swap traffic (SD card)",
-      "description": "Pages moved between RAM and swap. Sustained traffic means RAM is too tight.",
+      "title": "Swap traffic",
+      "description": "Pages moved between RAM and swap (zram). Short bursts are fine; sustained traffic means RAM is too tight.",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
@@ -945,10 +937,26 @@
               "mode": "none",
               "group": "A"
             },
-            "axisSoftMin": 0
+            "axisSoftMin": 0,
+            "thresholdsStyle": {
+              "mode": "line"
+            }
           },
           "color": {
             "mode": "palette-classic"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 5242880
+              }
+            ]
           },
           "min": 0
         },
