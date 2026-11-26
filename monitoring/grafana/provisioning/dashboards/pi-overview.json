@@ -1191,13 +1191,13 @@
               "__name__": true,
               "instance": true,
               "job": true,
-              "fstype": true
+              "fstype": true,
+              "device": true
             },
             "indexByName": {
               "mountpoint": 0,
-              "device": 1,
-              "Value #A": 2,
-              "Value #B": 3
+              "Value #A": 1,
+              "Value #B": 2
             },
             "renameByName": {
               "mountpoint": "Mount",
