@@ -6,9 +6,8 @@
 
 default_config:
 
-http:
-  ip_ban_enabled: true
-  login_attempts_threshold: 5
+# HTTP settings (IP ban, login attempts threshold) live in the UI since 2026.11:
+# Settings → System → Network. A YAML http: block is only imported on the very first start.
 
 # The SD card is slow and wears out: write history every 30 s, keep 7 days (long-term trends live in Prometheus).
 recorder:
