@@ -1,0 +1,30 @@
+# Home Assistant at http://home.local, LAN only:
+#   - nginx vhost nginx/conf.d/home.local.conf (LAN + Docker bridges, Cloudflare tunnel refused)
+#   - host firewall host/ha-lan-only.sh: HA ports reachable from loopback, 192.168.178.0/24,
+#     LAN IPv6 (ULA/link-local) and Docker bridges only
+# No Nabu Casa / remote access. Everything else is configured in the UI.
+
+default_config:
+
+http:
+  use_x_forwarded_for: true
+  # nginx (Docker) reaches HA from one of its bridge networks
+  trusted_proxies:
+    - 127.0.0.1
+    - ::1
+    - 172.18.0.0/16   # home-media-server_monitoring
+    - 172.21.0.0/16   # home-media-server_nginx-network
+  ip_ban_enabled: true
+  login_attempts_threshold: 5
+
+# The SD card is slow and wears out: write history every 30 s, keep 7 days (long-term trends live in Prometheus).
+recorder:
+  commit_interval: 30
+  purge_keep_days: 7
+
+logger:
+  default: warning
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml

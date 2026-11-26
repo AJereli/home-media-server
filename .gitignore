@@ -147,3 +147,7 @@ secrets.yml
 *.tar.gz
 *.rar
 *.7z
+
+# Home Assistant: only configuration.yaml is tracked (state, secrets, DB and UI-made files are not)
+homeassistant/config/*
+!homeassistant/config/configuration.yaml

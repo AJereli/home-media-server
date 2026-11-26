@@ -1,0 +1,14 @@
+[Unit]
+Description=Firewall: Home Assistant ports reachable from the home network only
+DefaultDependencies=no
+After=network-pre.target
+Wants=network-pre.target
+Before=docker.service network.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/sbin/ha-lan-only.sh
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,28 @@
+services:
+  homeassistant:
+    # Pinned on purpose: read the release notes and take a backup (Settings → System → Backups) before bumping.
+    image: ghcr.io/home-assistant/home-assistant:2026.11.3
+    container_name: homeassistant
+    restart: unless-stopped
+    # Host network so discovery works (Tapo, Cast/Android TV, mDNS, the phone app finding the server).
+    # Home Assistant then listens on every host address: host/ha-lan-only.sh limits its ports to the LAN.
+    network_mode: host
+    environment:
+      - TZ=Europe/Berlin
+    volumes:
+      - ./homeassistant/config:/config
+      # Backups go to the HDD, not the SD card.
+      - type: bind
+        source: /mnt/media/_Backups/homeassistant
+        target: /config/backups
+        bind:
+          create_host_path: false
+      - /etc/localtime:/etc/localtime:ro
+    # Enforced once the kernel has the memory cgroup (cgroup_enable=memory in cmdline.txt).
+    mem_limit: 768m
+    cpus: 1.5
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"

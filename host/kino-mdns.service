@@ -1,0 +1,12 @@
+[Unit]
+Description=Publish kino.local, logs.local, home.local (mDNS names for Jellyfin, Grafana, Home Assistant)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStart=/usr/local/bin/kino-mdns.py
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
