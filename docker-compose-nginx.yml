@@ -18,6 +18,7 @@ services:
       - "host.docker.internal:host-gateway"
     networks:
       - nginx-network
+      - monitoring   # to reach grafana:3000 for logs.local
 
   cloudflared:
     image: cloudflare/cloudflared:latest
@@ -32,3 +33,6 @@ services:
 networks:
   nginx-network:
     driver: bridge
+  monitoring:
+    external: true
+    name: home-media-server_monitoring

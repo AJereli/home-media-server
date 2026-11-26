@@ -1,13 +1,14 @@
-version: '3.8'
-
 services:
   # Prometheus - Metrics collection
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
     restart: unless-stopped
+    # Localhost only: the UI is reached through Grafana (logs.local), never from the LAN directly.
     ports:
-      - "9090:9090"
+      - "127.0.0.1:9090:9090"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
@@ -23,23 +24,25 @@ services:
       - monitoring
 
   # Node Exporter - System metrics
+  # Host network + host PID, otherwise it reports the container's own network instead of the Pi's.
+  # Listens only on docker0 (172.17.0.1): Prometheus reaches it, the LAN does not.
   node-exporter:
     image: prom/node-exporter:latest
     container_name: node-exporter
     restart: unless-stopped
-    ports:
-      - "9100:9100"
+    network_mode: host
+    pid: host
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
-      - /:/rootfs:ro
+      - /:/rootfs:ro,rslave
     command:
+      - '--web.listen-address=172.17.0.1:9100'
       - '--path.procfs=/host/proc'
       - '--path.rootfs=/rootfs'
       - '--path.sysfs=/host/sys'
-      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
-    networks:
-      - monitoring
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc|run|var/lib/docker)($$|/)'
+      - '--collector.netdev.device-exclude=^(lo|veth.*|br-.*|docker.*)$$'
 
   # cAdvisor - Container metrics
   cadvisor:
@@ -47,7 +50,10 @@ services:
     container_name: cadvisor
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080"
+    command:
+      - '--docker_only=true'
+      - '--housekeeping_interval=15s'
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:ro
@@ -60,17 +66,28 @@ services:
     networks:
       - monitoring
 
-  # Grafana - Web dashboard
+  # Grafana - Web dashboard at http://logs.local (nginx vhost, LAN only)
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
     restart: unless-stopped
+    # Localhost only; the LAN goes through nginx (logs.local), which joins the monitoring network.
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     environment:
       - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin123
+      # Only used when the Grafana DB is first created; to change it later: grafana cli admin reset-admin-password
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:?set GRAFANA_ADMIN_PASSWORD in .env}
       - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SERVER_DOMAIN=logs.local
+      - GF_SERVER_ROOT_URL=http://logs.local/
+      # Anyone on the home network can view dashboards without logging in; editing needs the admin login.
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+      - GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/etc/grafana/provisioning/dashboards/pi-overview.json
+      - GF_ANALYTICS_REPORTING_ENABLED=false
+      - GF_NEWS_NEWS_FEED_ENABLED=false
+      - TZ=Europe/Berlin
     volumes:
       - grafana_data:/var/lib/grafana
       - ./monitoring/grafana/provisioning:/etc/grafana/provisioning

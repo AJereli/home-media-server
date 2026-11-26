@@ -13,9 +13,12 @@ scrape_configs:
       - targets: ['localhost:9090']
 
   # Node Exporter - System metrics
+  # Runs on the host network, listening on docker0 only.
   - job_name: 'node-exporter'
     static_configs:
-      - targets: ['node-exporter:9100']
+      - targets: ['172.17.0.1:9100']
+        labels:
+          instance: 'raspberrypi'
 
   # cAdvisor - Container metrics
   - job_name: 'cadvisor'
