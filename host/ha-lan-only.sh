@@ -22,8 +22,9 @@ ip6tables -A HA-LAN-ONLY -s fe80::/10 -j RETURN           # link-local
 ip6tables -A HA-LAN-ONLY -j DROP
 
 for ipt in iptables ip6tables; do
+  # drop jumps left by an older port list, then add the current ones
+  $ipt -S INPUT | grep -- '-j HA-LAN-ONLY' | sed 's/^-A //' | while read -r rule; do $ipt -D INPUT $rule; done
   for proto in tcp udp; do
-    $ipt -C INPUT -p $proto -m multiport --dports $PORTS -j HA-LAN-ONLY 2>/dev/null \
-      || $ipt -I INPUT -p $proto -m multiport --dports $PORTS -j HA-LAN-ONLY
+    $ipt -I INPUT -p $proto -m multiport --dports $PORTS -j HA-LAN-ONLY
   done
 done
